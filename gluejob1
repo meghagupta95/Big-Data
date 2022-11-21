@@ -1,0 +1,46 @@
+import sys
+from awsglue.transforms import *
+from awsglue.utils import getResolvedOptions
+from pyspark.context import SparkContext
+from awsglue.context import GlueContext
+from awsglue.job import Job
+
+## @params: [TempDir, JOB_NAME]
+args = getResolvedOptions(sys.argv, ['TempDir','JOB_NAME'])
+
+sc = SparkContext()
+glueContext = GlueContext(sc)
+spark = glueContext.spark_session
+job = Job(glueContext)
+job.init(args['JOB_NAME'], args)
+## @type: DataSource
+## @args: [database = "test15", table_name = "cleaned_accidents_csv", transformation_ctx = "datasource0"]
+## @return: datasource0
+## @inputs: []
+datasource0 = glueContext.create_dynamic_frame.from_catalog(database = "test15", table_name = "cleaned_accidents_csv", transformation_ctx = "datasource0")
+## @type: ApplyMapping
+## @args: [mapping = [("id", "string", "id", "string"), ("severity", "long", "severity", "long"), ("start_time", "string", "start_time", "string"), ("end_time", "string", "end_time", "string"), ("start_lat", "double", "start_lat", "double"), ("start_lng", "double", "start_lng", "double"), ("distance(mi)", "double", "distance", "double"), ("description", "string", "description", "string"), ("street", "string", "street", "string"), ("side", "string", "side", "string"), ("city", "string", "city", "string"), ("county", "string", "county", "string"), ("state", "string", "state", "string"), ("zipcode", "string", "zipcode", "string"), ("country", "string", "country", "string"), ("timezone", "string", "timezone", "string"), ("airport_code", "string", "airport_code", "string"), ("temperature(f)", "double", "temperature", "double"), ("humidity(%)", "double", "humidity", "double"), ("pressure(in)", "double", "pressure", "double"), ("visibility(mi)", "double", "visibility", "double"), ("wind_direction", "string", "wind_direction", "string"), ("wind_speed(mph)", "double", "wind_speed", "double"), ("weather_condition", "string", "weather_condition", "string"), ("amenity", "boolean", "amenity", "boolean"), ("bump", "boolean", "bump", "boolean"), ("crossing", "boolean", "crossing", "boolean"), ("give_way", "boolean", "give_way", "boolean"), ("junction", "boolean", "junction", "boolean"), ("no_exit", "boolean", "no_exit", "boolean"), ("railway", "boolean", "railway", "boolean"), ("roundabout", "boolean", "roundabout", "boolean"), ("station", "boolean", "station", "boolean"), ("stop", "boolean", "stop", "boolean"), ("traffic_calming", "boolean", "traffic_calming", "boolean"), ("traffic_signal", "boolean", "traffic_signal", "boolean"), ("turning_loop", "boolean", "turning_loop", "boolean"), ("sunrise_sunset", "string", "sunrise_sunset", "string"), ("civil_twilight", "string", "civil_twilight", "string"), ("nautical_twilight", "string", "nautical_twilight", "string"), ("astronomical_twilight", "string", "astronomical_twilight", "string")], transformation_ctx = "applymapping1"]
+## @return: applymapping1
+## @inputs: [frame = datasource0]
+applymapping1 = ApplyMapping.apply(frame = datasource0, mappings = [("id", "string", "id", "string"), ("severity", "long", "severity", "long"), ("start_time", "string", "start_time", "string"), ("end_time", "string", "end_time", "string"), ("start_lat", "double", "start_lat", "double"), ("start_lng", "double", "start_lng", "double"), ("distance(mi)", "double", "distance", "double"), ("description", "string", "description", "string"), ("street", "string", "street", "string"), ("side", "string", "side", "string"), ("city", "string", "city", "string"), ("county", "string", "county", "string"), ("state", "string", "state", "string"), ("zipcode", "string", "zipcode", "string"), ("country", "string", "country", "string"), ("timezone", "string", "timezone", "string"), ("airport_code", "string", "airport_code", "string"), ("temperature(f)", "double", "temperature", "double"), ("humidity(%)", "double", "humidity", "double"), ("pressure(in)", "double", "pressure", "double"), ("visibility(mi)", "double", "visibility", "double"), ("wind_direction", "string", "wind_direction", "string"), ("wind_speed(mph)", "double", "wind_speed", "double"), ("weather_condition", "string", "weather_condition", "string"), ("amenity", "boolean", "amenity", "boolean"), ("bump", "boolean", "bump", "boolean"), ("crossing", "boolean", "crossing", "boolean"), ("give_way", "boolean", "give_way", "boolean"), ("junction", "boolean", "junction", "boolean"), ("no_exit", "boolean", "no_exit", "boolean"), ("railway", "boolean", "railway", "boolean"), ("roundabout", "boolean", "roundabout", "boolean"), ("station", "boolean", "station", "boolean"), ("stop", "boolean", "stop", "boolean"), ("traffic_calming", "boolean", "traffic_calming", "boolean"), ("traffic_signal", "boolean", "traffic_signal", "boolean"), ("turning_loop", "boolean", "turning_loop", "boolean"), ("sunrise_sunset", "string", "sunrise_sunset", "string"), ("civil_twilight", "string", "civil_twilight", "string"), ("nautical_twilight", "string", "nautical_twilight", "string"), ("astronomical_twilight", "string", "astronomical_twilight", "string")], transformation_ctx = "applymapping1")
+## @type: SelectFields
+## @args: [paths = ["junction", "country", "distance", "turning_loop", "city", "timezone", "amenity", "county", "description", "start_lng", "street", "start_lat", "temperature", "bump", "station", "nautical_twilight", "humidity", "wind_speed", "id", "state", "railway", "no_exit", "give_way", "roundabout", "severity", "side", "visibility", "airport_code", "end_time", "weather_condition", "wind_direction", "pressure", "astronomical_twilight", "crossing", "civil_twilight", "zipcode", "start_time", "stop", "sunrise_sunset", "traffic_calming", "traffic_signal"], transformation_ctx = "selectfields2"]
+## @return: selectfields2
+## @inputs: [frame = applymapping1]
+selectfields2 = SelectFields.apply(frame = applymapping1, paths = ["junction", "country", "distance", "turning_loop", "city", "timezone", "amenity", "county", "description", "start_lng", "street", "start_lat", "temperature", "bump", "station", "nautical_twilight", "humidity", "wind_speed", "id", "state", "railway", "no_exit", "give_way", "roundabout", "severity", "side", "visibility", "airport_code", "end_time", "weather_condition", "wind_direction", "pressure", "astronomical_twilight", "crossing", "civil_twilight", "zipcode", "start_time", "stop", "sunrise_sunset", "traffic_calming", "traffic_signal"], transformation_ctx = "selectfields2")
+## @type: ResolveChoice
+## @args: [choice = "MATCH_CATALOG", database = "redshifts315", table_name = "dev_public_accidents", transformation_ctx = "resolvechoice3"]
+## @return: resolvechoice3
+## @inputs: [frame = selectfields2]
+resolvechoice3 = ResolveChoice.apply(frame = selectfields2, choice = "MATCH_CATALOG", database = "redshifts315", table_name = "dev_public_accidents", transformation_ctx = "resolvechoice3")
+## @type: ResolveChoice
+## @args: [choice = "make_cols", transformation_ctx = "resolvechoice4"]
+## @return: resolvechoice4
+## @inputs: [frame = resolvechoice3]
+resolvechoice4 = ResolveChoice.apply(frame = resolvechoice3, choice = "make_cols", transformation_ctx = "resolvechoice4")
+## @type: DataSink
+## @args: [database = "redshifts315", table_name = "dev_public_accidents", redshift_tmp_dir = TempDir, transformation_ctx = "datasink5"]
+## @return: datasink5
+## @inputs: [frame = resolvechoice4]
+datasink5 = glueContext.write_dynamic_frame.from_catalog(frame = resolvechoice4, database = "redshifts315", table_name = "dev_public_accidents", redshift_tmp_dir = args["TempDir"], transformation_ctx = "datasink5")
+job.commit()
